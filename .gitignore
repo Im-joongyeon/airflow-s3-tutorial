@@ -1,0 +1,40 @@
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Airflow
+logs/
+airflow.cfg
+airflow.db
+airflow-webserver.pid
+standalone_admin_password.txt
+unittests.cfg
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+postgres-db-volume/
+
+# AWS credentials (if accidentally placed here)
+*.pem
+credentials
