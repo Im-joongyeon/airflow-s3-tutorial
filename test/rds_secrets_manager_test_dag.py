@@ -33,8 +33,9 @@ def get_secret_from_secrets_manager():
     Returns:
         dict: Database connection credentials
     """
-    secret_name = "rds!db-bda67cba-841c-4534-b595-1519377d3102"
-    region_name = "ap-northeast-2"
+    import os
+    secret_name = os.getenv('RDS_SECRET_NAME', 'real_secret')
+    region_name = os.getenv('AWS_REGION', 'ap-northeast-2')
 
     # Create a Secrets Manager client
     session = boto3.session.Session()
@@ -68,16 +69,19 @@ def query_rds_table(**context):
     3. Executes a SELECT query with LIMIT 1
     4. Logs the result
     """
+    import os
+
     # Get database credentials from Secrets Manager
     logger.info("Fetching credentials from Secrets Manager...")
     credentials = get_secret_from_secrets_manager()
 
     # Extract connection details
-    host = credentials.get('host')
+    # Get host, port, database from environment variables (not in Secrets Manager)
+    host = credentials.get('host') or os.getenv('RDS_HOST', 'real_endpoint')
     username = credentials.get('username')
     password = credentials.get('password')
-    database = credentials.get('dbname') or credentials.get('database')
-    port = credentials.get('port', 3306)
+    database = credentials.get('dbname') or credentials.get('database') or os.getenv('RDS_DATABASE', 'test_db')
+    port = credentials.get('port') or int(os.getenv('RDS_PORT', '3306'))
 
     logger.info(f"Connecting to RDS: {host}:{port}/{database}")
 
@@ -147,7 +151,6 @@ with DAG(
     query_task = PythonOperator(
         task_id='query_rds_with_secrets_manager',
         python_callable=query_rds_table,
-        provide_context=True,
         doc_md="""
         ## Query RDS Task
 
