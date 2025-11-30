@@ -356,7 +356,7 @@ services:
         echo "Sync interval: $${SYNC_INTERVAL} seconds"
         while true; do
           echo "[$(date)] Syncing DAGs from S3..."
-          aws s3 sync s3://$${S3_BUCKET}/$${S3_PREFIX} /local/dags/ --delete
+          aws s3 sync s3://$${S3_BUCKET}/$${S3_PREFIX} /local/dags/
           if [ $$? -eq 0 ]; then
             echo "[$(date)] Sync completed successfully"
           else
